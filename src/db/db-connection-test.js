@@ -1,5 +1,7 @@
 import sql from './db.js'
 
+//test db connection
+
 async function testConnection() {
   try {
     const result = await sql`SELECT 1 as connected`

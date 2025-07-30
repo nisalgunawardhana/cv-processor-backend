@@ -1,5 +1,7 @@
 import 'dotenv/config';
 
+// configaration for the backend
+
 export const config = {
   port: process.env.PORT || 3000,
   supabase: {

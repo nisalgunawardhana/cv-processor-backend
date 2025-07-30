@@ -1,3 +1,6 @@
+// prompt for cv extraction and rules for the CV parser, its send to the LLM
+
+
 export const CV_EXTRACTION_PROMPT = `You are an expert CV/Resume parser. Extract structured data from the provided CV text and return ONLY a valid JSON object with the following exact structure:
 
 {

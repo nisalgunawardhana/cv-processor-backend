@@ -85,20 +85,52 @@
     </style>
 </head>
 <body>
-    <h1>Resume API Test Page</h1>
-    
-    <!-- Authentication Section -->
-    <div class="container">
-        <h2>Authentication</h2>
-        <div class="form-group">
-            <label for="token">JWT Token:</label>
-            <input type="text" id="token" placeholder="Paste your JWT token here" style="width: 400px;">
-        </div>
-        <button class="btn" onclick="testAuth()">Test Token</button>
+    <h1>CV Processor - Auth & Resume Data</h1>
+
+    <!-- Authentication Section (Login/Register) -->
+    <div class="container" id="authSection">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginEmail">Email:</label>
+                <input type="email" id="loginEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" name="password" required>
+            </div>
+            <button class="btn" type="submit">Login</button>
+        </form>
+        <div id="loginResponse" class="result" style="display:none;"></div>
+        <hr>
+        <h2>Register</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="regName">Name:</label>
+                <input type="text" id="regName" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Email:</label>
+                <input type="email" id="regEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Password:</label>
+                <input type="password" id="regPassword" name="password" required>
+            </div>
+            <button class="btn" type="submit">Register</button>
+        </form>
+        <div id="registerResponse" class="result" style="display:none;"></div>
     </div>
 
-    <!-- Get All Resumes Section -->
-    <div class="container">
+    <!-- Resume Data Section (hidden until login) -->
+    <div class="container" id="resumeSection" style="display:none;">
+        <div style="float:right;">
+            <button class="btn" onclick="moveToUpload()">Go to Upload</button>
+            <button class="btn" onclick="logout()">Logout</button>
+        </div>
+        <h2>Welcome! <span id="userEmail"></span></h2>
+        <div class="token-display"><strong>Current Token:</strong> <span id="currentToken">No token set</span></div>
+        <hr>
         <h2>Get All Resumes</h2>
         <div class="form-group">
             <label for="fullName">Full Name:</label>
@@ -126,28 +158,21 @@
         </div>
         <button class="btn" onclick="getAllResumes()">Get Resumes</button>
         <button class="btn" onclick="clearFilters()">Clear Filters</button>
-        
         <div id="resumesResult" class="result" style="display: none;"></div>
-    </div>
-
-    <!-- Get Resume by ID Section -->
-    <div class="container">
+        <hr>
         <h2>Get Resume by ID</h2>
         <div class="form-group">
             <label for="resumeId">Resume ID:</label>
             <input type="number" id="resumeId" placeholder="Enter resume ID">
         </div>
         <button class="btn" onclick="getResumeById()">Get Resume</button>
-        
         <div id="resumeByIdResult" class="result" style="display: none;"></div>
     </div>
 
     <script>
         const API_BASE = 'http://localhost:3000';
-
-        function getToken() {
-            return document.getElementById('token').value.trim();
-        }
+        let authToken = localStorage.getItem('authToken') || '';
+        let userEmail = localStorage.getItem('userEmail') || '';
 
         function showResult(elementId, data, isError = false) {
             const element = document.getElementById(elementId);
@@ -156,66 +181,133 @@
             element.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
         }
 
-        async function testAuth() {
-            const token = getToken();
-            if (!token) {
-                alert('Please enter a JWT token');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/profile`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    showResult('resumesResult', { message: 'Token is valid', user: data });
-                } else {
-                    showResult('resumesResult', data, true);
-                }
-            } catch (error) {
-                showResult('resumesResult', { error: 'Network error', details: error.message }, true);
+        function updateTokenDisplay() {
+            const tokenDiv = document.getElementById('currentToken');
+            if (authToken) {
+                tokenDiv.textContent = authToken.substring(0, 50) + '...';
+            } else {
+                tokenDiv.textContent = 'No token set';
             }
         }
 
+        function showResumeSection() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('resumeSection').style.display = 'block';
+            document.getElementById('userEmail').textContent = userEmail;
+            updateTokenDisplay();
+        }
+
+        function showAuthSection() {
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('resumeSection').style.display = 'none';
+            document.getElementById('userEmail').textContent = '';
+            updateTokenDisplay();
+        }
+
+        function saveAuth(token, email) {
+            authToken = token;
+            userEmail = email;
+            localStorage.setItem('authToken', token);
+            localStorage.setItem('userEmail', email);
+        }
+
+        function logout() {
+            authToken = '';
+            userEmail = '';
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userEmail');
+            // Clear resume data/results
+            document.getElementById('resumesResult').style.display = 'none';
+            document.getElementById('resumeByIdResult').style.display = 'none';
+            clearFilters();
+            document.getElementById('resumeId').value = '';
+            showAuthSection();
+        }
+
+        function moveToUpload() {
+            window.location.href = 'test-upload.html';
+        }
+
+        // Register
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            const responseDiv = document.getElementById('registerResponse');
+            responseDiv.style.display = 'block';
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    responseDiv.className = 'result success';
+                    saveAuth(result.data.token, data.email);
+                    showResumeSection();
+                } else {
+                    responseDiv.className = 'result error';
+                }
+                responseDiv.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                responseDiv.className = 'result error';
+                responseDiv.textContent = 'Error: ' + error.message;
+            }
+        });
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            const responseDiv = document.getElementById('loginResponse');
+            responseDiv.style.display = 'block';
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    responseDiv.className = 'result success';
+                    saveAuth(result.data.token, data.email);
+                    showResumeSection();
+                } else {
+                    responseDiv.className = 'result error';
+                }
+                responseDiv.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                responseDiv.className = 'result error';
+                responseDiv.textContent = 'Error: ' + error.message;
+            }
+        });
+
         async function getAllResumes() {
-            const token = getToken();
-            if (!token) {
-                alert('Please enter a JWT token');
+            if (!authToken) {
+                alert('Please login first.');
                 return;
             }
-
             const params = new URLSearchParams();
-            
             const fullName = document.getElementById('fullName').value;
             const skill = document.getElementById('skill').value;
             const dateFrom = document.getElementById('dateFrom').value;
             const dateTo = document.getElementById('dateTo').value;
             const page = document.getElementById('page').value;
             const pageSize = document.getElementById('pageSize').value;
-
             if (fullName) params.append('full_name', fullName);
             if (skill) params.append('skill', skill);
             if (dateFrom) params.append('date_from', dateFrom);
             if (dateTo) params.append('date_to', dateTo);
             if (page) params.append('page', page);
             if (pageSize) params.append('pageSize', pageSize);
-
             try {
                 const response = await fetch(`${API_BASE}/resumes?${params}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${authToken}` }
                 });
-                
                 const data = await response.json();
-                
                 if (response.ok) {
-                    // Format the display for better readability
                     const formattedData = {
                         success: data.success,
                         pagination: data.pagination,
@@ -240,28 +332,20 @@
         }
 
         async function getResumeById() {
-            const token = getToken();
-            const resumeId = document.getElementById('resumeId').value;
-            
-            if (!token) {
-                alert('Please enter a JWT token');
+            if (!authToken) {
+                alert('Please login first.');
                 return;
             }
-            
+            const resumeId = document.getElementById('resumeId').value;
             if (!resumeId) {
                 alert('Please enter a resume ID');
                 return;
             }
-
             try {
                 const response = await fetch(`${API_BASE}/resumes/${resumeId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${authToken}` }
                 });
-                
                 const data = await response.json();
-                
                 if (response.ok) {
                     showResult('resumeByIdResult', data);
                 } else {
@@ -279,6 +363,15 @@
             document.getElementById('dateTo').value = '';
             document.getElementById('page').value = '1';
             document.getElementById('pageSize').value = '10';
+        }
+
+        // On page load, show correct section
+        window.onload = function() {
+            if (authToken) {
+                showResumeSection();
+            } else {
+                showAuthSection();
+            }
         }
     </script>
 </body>

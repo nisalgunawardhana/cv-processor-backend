@@ -47,7 +47,7 @@ export async function initializeDatabase() {
   }
 }
 
-// Insert CV data into database
+// Insert cv data to database
 export async function insertCVData(structuredData, fileUrl, originalFilename) {
   try {
     const result = await sql`
@@ -81,7 +81,7 @@ export async function insertCVData(structuredData, fileUrl, originalFilename) {
   }
 }
 
-// Get all CV data
+// Get all cv data from database
 export async function getAllCVData() {
   try {
     const results = await sql`
@@ -196,7 +196,12 @@ export async function getCVDataById(id) {
   }
 }
 
-// User management functions
+/*
+ * User management functions
+ * These functions handle user creation and retrieval from the database.
+ */
+
+//add new user to db
 export async function createUser(userData) {
   try {
     const result = await sql`
@@ -211,6 +216,7 @@ export async function createUser(userData) {
   }
 }
 
+//get user by mail
 export async function getUserByEmail(email) {
   try {
     const results = await sql`
@@ -223,6 +229,7 @@ export async function getUserByEmail(email) {
   }
 }
 
+//get user by id
 export async function getUserById(id) {
   try {
     const results = await sql`

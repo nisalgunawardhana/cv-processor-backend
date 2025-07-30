@@ -1,3 +1,5 @@
+//test llama model with together-ai
+
 import Together from "together-ai";
 import dotenv from "dotenv";
 dotenv.config();

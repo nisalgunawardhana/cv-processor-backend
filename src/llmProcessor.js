@@ -5,7 +5,7 @@ import {CV_EXTRACTION_PROMPT } from './config/prompt.js';
 
 const together = new Together({ apiKey: config.togetherAI.apiKey });
 
-// Function to process text with LLM
+//process text with LLM
 export async function processWithLLM(text) {
   try {
     if (!text || text.trim().length === 0) {
