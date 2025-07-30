@@ -4,6 +4,7 @@ import { config } from './config.js';
 import { initializeDatabase } from './database.js';
 import { handleUploadError } from './middleware/upload.js';
 import cvRoutes from './routes/cvRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
 
 const app = express();
@@ -17,6 +18,7 @@ app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.use('/', cvRoutes);
+app.use('/', authRoutes);
 app.use('/', healthRoutes);
 
 // Error handling middleware
