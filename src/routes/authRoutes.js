@@ -8,7 +8,7 @@ import { config } from '../config/config.js';
 const router = express.Router();
 
 // Register a new user
-router.post('/auth/register', async (req, res) => {
+router.post('/register', async (req, res) => {
   try {
     const { email, password, name } = req.body;
 
@@ -88,7 +88,7 @@ router.post('/auth/register', async (req, res) => {
 });
 
 // Login
-router.post('/auth/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -149,7 +149,7 @@ router.post('/auth/login', async (req, res) => {
 });
 
 // Get current user profile
-router.get('/auth/profile', async (req, res) => {
+router.get('/profile', async (req, res) => {
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
