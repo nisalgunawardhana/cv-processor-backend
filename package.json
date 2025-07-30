@@ -1,11 +1,12 @@
 {
   "name": "cv-llms",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/server.js",
   "type": "module",
   "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "test-llama": "node src/model.js",
     "test-together": "node src/model-together.js",
     "test-db": "node src/db-connection-test.js"
   },
@@ -17,9 +18,13 @@
     "@azure-rest/ai-inference": "latest",
     "@azure/core-auth": "latest",
     "@azure/core-sse": "latest",
+    "@supabase/supabase-js": "^2.53.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "mammoth": "^1.9.1",
+    "multer": "^2.0.2",
+    "pdfjs-dist": "^5.4.54",
     "postgres": "^3.4.7",
     "together-ai": "^0.21.0"
   }
