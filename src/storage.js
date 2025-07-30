@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { config } from './config.js';
+import { config } from './config/config.js';
 
 
 const supabase = config.supabase.url && config.supabase.key 

@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { generateToken } from '../middleware/auth.js';
 import { createUser, getUserByEmail, getUserById } from '../database.js';
-import { config } from '../config.js';
+import { config } from '../config/config.js';
 
 const router = express.Router();
 

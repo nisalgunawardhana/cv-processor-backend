@@ -1,5 +1,6 @@
 import Together from 'together-ai';
-import { config, CV_EXTRACTION_PROMPT } from './config.js';
+import { config } from './config/config.js';
+import {CV_EXTRACTION_PROMPT } from './config/prompt.js';
 
 
 const together = new Together({ apiKey: config.togetherAI.apiKey });

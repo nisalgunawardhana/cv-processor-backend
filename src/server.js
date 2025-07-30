@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { config } from './config.js';
+import { config } from './config/config.js';
 import { initializeDatabase } from './database.js';
 import { handleUploadError } from './middleware/upload.js';
 import cvRoutes from './routes/cvRoutes.js';
