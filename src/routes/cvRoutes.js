@@ -4,7 +4,7 @@ import { authenticateToken } from '../middleware/auth.js';
 import { extractText } from '../textExtraction.js';
 import { processWithLLM } from '../llmProcessor.js';
 import { uploadToSupabase } from '../storage.js';
-import { insertCVData, getFilteredCVData, getCVDataById } from '../database.js';
+import { insertCVData, getFilteredCVData, getCVDataById } from '../db/database.js';
 
 const router = express.Router();
 

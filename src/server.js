@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { config } from './config/config.js';
-import { initializeDatabase } from './database.js';
+import { initializeDatabase } from './db/database.js';
 import { handleUploadError } from './middleware/upload.js';
 import cvRoutes from './routes/cvRoutes.js';
 import authRoutes from './routes/authRoutes.js';
