@@ -1,0 +1,26 @@
+{
+  "name": "cv-llms",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-llama": "node src/model.js",
+    "test-together": "node src/model-together.js",
+    "test-db": "node src/db-connection-test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@azure-rest/ai-inference": "latest",
+    "@azure/core-auth": "latest",
+    "@azure/core-sse": "latest",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "postgres": "^3.4.7",
+    "together-ai": "^0.21.0"
+  }
+}
