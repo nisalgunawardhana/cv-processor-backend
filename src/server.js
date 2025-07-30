@@ -6,6 +6,7 @@ import { handleUploadError } from './middleware/upload.js';
 import cvRoutes from './routes/cvRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
+import { connectRedis } from './config/redis.js';
 
 const app = express();
 
@@ -34,6 +35,8 @@ app.use((error, req, res, next) => {
 async function startServer() {
   try {
     await initializeDatabase();
+    // Connect to Redis 
+    await connectRedis();
     
     app.listen(config.port, () => {
       console.log(`CV Processor API running on port ${config.port}`);

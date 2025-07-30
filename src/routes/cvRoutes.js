@@ -5,6 +5,7 @@ import { extractText } from '../textExtraction.js';
 import { processWithLLM } from '../llmProcessor.js';
 import { uploadToSupabase } from '../storage.js';
 import { insertCVData, getFilteredCVData, getCVDataById } from '../db/database.js';
+import { redisClient } from '../config/redis.js';
 
 const router = express.Router();
 
@@ -27,6 +28,11 @@ router.post('/upload-cv', upload.single('cv'), async (req, res) => {
     const fileUrl = await uploadToSupabase(file, fileName);
     const structuredData = await processWithLLM(extractedText);
     const result = await insertCVData(structuredData, fileUrl, file.originalname);
+
+    const keys = await redisClient.keys('resumes*');
+    if (keys.length > 0) {
+      await redisClient.del(keys);
+    }
 
     res.status(200).json({
       success: true,
@@ -53,6 +59,11 @@ router.post('/upload-cv', upload.single('cv'), async (req, res) => {
 // Requires authentication (JWT-based)
 router.get('/resumes', authenticateToken, async (req, res) => {
   try {
+    const cacheKey = `resumes:${JSON.stringify(req.query)}`;
+    const cached = await redisClient.get(cacheKey);
+    if (cached) {
+      return res.json(JSON.parse(cached));
+    }
     const { full_name, skill, date_from, date_to, page, pageSize } = req.query;
     
     const filters = {};
@@ -67,11 +78,14 @@ router.get('/resumes', authenticateToken, async (req, res) => {
     
     const result = await getFilteredCVData(filters, pagination);
 
-    res.json({
+    const response = {
       success: true,
       data: result.data,
       pagination: result.pagination
-    });
+    };
+
+    await redisClient.setEx(cacheKey, 60, JSON.stringify(response)); // Cache for 60 seconds
+    res.json(response);
   } catch (error) {
     console.error('Database query error:', error);
     res.status(500).json({ 
