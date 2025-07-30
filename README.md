@@ -41,17 +41,19 @@ npm start
 
 ## API Endpoint Documentation
 
-
 ### Authentication
 - `POST /api/v1/auth/login` — User login
 - `POST /api/v1/auth/register` — User registration
+- `GET /api/v1/auth/profile` — Get user profile
 
 ### CV Processing
-- `POST /api/v1/cv/upload` — Upload a CV (PDF)
-- `GET /api/v1/cv/:id` — Get processed CV data by ID
+- `POST /api/v1/cv/upload-cv` — Upload a CV (PDF)
+- `GET /api/v1/cv/resumes` — Get filtered resume data
+- `GET /api/v1/cv/resumes/:id` — Get specific resume data by ID
 
 ### Health Check
 - `GET /api/v1/health` — Check server status
+- `GET /api/v1/health/test-supabase` — Test Supabase connection
 
 > **Note:** For detailed request/response formats, see the route files in `src/routes/`.
 
