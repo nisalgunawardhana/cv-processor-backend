@@ -167,6 +167,12 @@ SUPABASE_BUCKET=your_bucket_name
 
 All API endpoints are prefixed with: `/api/v1`
 
+> **API Reference:**  
+> The CV Processor Backend API is fully documented in the public Postman collection:  
+> [View Postman Documentation](https://documenter.getpostman.com/view/26903734/2sB3B8sZHP)
+>
+> The collection provides comprehensive details on all endpoints, request/response formats, authentication, and usage examples. Refer to the linked documentation for complete integration guidance.
+
 ### Authentication Endpoints
 
 | Method | Endpoint | Description | Authentication |

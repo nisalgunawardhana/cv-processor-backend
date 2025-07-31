@@ -35,11 +35,11 @@ app.use('/uploads', express.static('uploads'));
 // Route group with versioning
 const v1Router = express.Router();
 
-v1Router.use('/', cvRoutes);
-v1Router.use('/auth', authRoutes);
-v1Router.use('/', healthRoutes);
+v1Router.use('/v1/', cvRoutes);
+v1Router.use('/v1/auth', authRoutes);
+v1Router.use('/v1/', healthRoutes);
 
-app.use('/api/v1', v1Router);
+app.use('/api', v1Router);
 
 // Error handling middleware
 app.use(handleUploadError);
