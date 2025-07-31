@@ -6,13 +6,12 @@ import mammoth from 'mammoth';
 
 // Function to extract text from PDF using pdf-parser
 export async function extractTextFromPDF(buffer) {
-  // pdf-parser only supports file paths, so we need to write the buffer to a temp file
   const tempPath = join(tmpdir(), `pdfparser_${Date.now()}.pdf`);
   try {
     await fs.writeFile(tempPath, buffer);
     return new Promise((resolve, reject) => {
       pdfParser.pdf2json(tempPath, function (error, pdf) {
-        // Clean up temp file
+        // Clean up temp 
         fs.unlink(tempPath).catch(() => {});
         if (error != null) {
           console.error('PDF extraction error:', error);

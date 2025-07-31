@@ -15,19 +15,21 @@ const app = express();
 app.use(cors());
 
 
-// app.use((req, res, next) => {
-//   // Allow application/json and multipart/form-data for POST/PUT
-//   if (req.method === 'POST' || req.method === 'PUT') {
-//     const contentType = req.headers['content-type'] || '';
-//     if (
-//       !contentType.startsWith('application/json') &&
-//       !contentType.startsWith('multipart/form-data')
-//     ) {
-//       return res.status(400).json({ error: 'Content-Type must be application/json or multipart/form-data' });
-//     }
-//   }
-//   next();
-// });
+app.use((req, res, next) => {
+  // Allow application/json and multipart/form-data for POST/PUT
+  if (req.method === 'POST' || req.method === 'PUT') {
+    const contentType = req.headers['content-type'] || '';
+    const testHeader = req.headers['x-woen-test'] || req.headers['x-postman-test'];
+    if (
+      !contentType.startsWith('application/json') &&
+      !contentType.startsWith('multipart/form-data') &&
+      !testHeader // Allow if custom test header is present
+    ) {
+      return res.status(400).json({ error: 'Content-Type must be application/json or multipart/form-data' });
+    }
+  }
+  next();
+});
 app.use(express.json());
 
 app.use('/uploads', express.static('uploads'));
