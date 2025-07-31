@@ -211,9 +211,9 @@ POST /api/v1/auth/login
 
 | Method | Endpoint | Description | Authentication |
 |--------|----------|-------------|----------------|
-| `POST` | `/cv/upload-cv` | Upload and process a CV | No |
-| `GET`  | `/cv/resumes` | Get filtered resume data | Yes (JWT) |
-| `GET`  | `/cv/resumes/:id` | Get specific resume by ID | Yes (JWT) |
+| `POST` | `/upload-cv` | Upload and process a CV | No |
+| `GET`  | `/resumes` | Get filtered resume data | Yes (JWT) |
+| `GET`  | `/resumes/:id` | Get specific resume by ID | Yes (JWT) |
 
 **Example Request: Upload CV**
 ```
