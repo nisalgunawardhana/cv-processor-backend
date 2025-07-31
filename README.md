@@ -167,6 +167,15 @@ SUPABASE_BUCKET=your_bucket_name
 
 All API endpoints are prefixed with: `/api/v1`
 
+/**
+ * This module provides API endpoints as documented in the public Postman collection:
+ * https://documenter.getpostman.com/view/26903734/2sB3B8sZHP
+ *
+ * The API includes detailed information about available endpoints, request/response formats,
+ * authentication, and usage examples. Please refer to the linked documentation for
+ * comprehensive guidance on integrating with the API.
+ */
+
 ### Authentication Endpoints
 
 | Method | Endpoint | Description | Authentication |
