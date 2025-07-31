@@ -1,32 +1,34 @@
-import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs';
+import pdfParser from 'pdf-parser';
+import { promises as fs } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
 import mammoth from 'mammoth';
 
-// Function to extract text from PDF
+// Function to extract text from PDF using pdf-parser
 export async function extractTextFromPDF(buffer) {
+  // pdf-parser only supports file paths, so we need to write the buffer to a temp file
+  const tempPath = join(tmpdir(), `pdfparser_${Date.now()}.pdf`);
   try {
-    // Load PDF document
-    const loadingTask = pdfjs.getDocument({
-      data: new Uint8Array(buffer),
-      verbosity: 0 // Suppress console output
+    await fs.writeFile(tempPath, buffer);
+    return new Promise((resolve, reject) => {
+      pdfParser.pdf2json(tempPath, function (error, pdf) {
+        // Clean up temp file
+        fs.unlink(tempPath).catch(() => {});
+        if (error != null) {
+          console.error('PDF extraction error:', error);
+          reject(new Error('Failed to extract text from PDF'));
+        } else {
+          // Extract all text from all pages
+          let text = '';
+          if (pdf && pdf.pages) {
+            text = pdf.pages.map(page =>
+              (page.texts || []).map(t => t.text).join(' ')
+            ).join('\n');
+          }
+          resolve(text.trim());
+        }
+      });
     });
-    
-    const pdf = await loadingTask.promise;
-    let fullText = '';
-
-    // Extract text from each page
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-      const page = await pdf.getPage(pageNum);
-      const textContent = await page.getTextContent();
-      
-      // Combine text items into a single string
-      const pageText = textContent.items
-        .map(item => item.str)
-        .join(' ');
-      
-      fullText += pageText + '\n';
-    }
-
-    return fullText.trim();
   } catch (error) {
     console.error('PDF extraction error:', error);
     throw new Error('Failed to extract text from PDF');
